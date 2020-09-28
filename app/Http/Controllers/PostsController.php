@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Post;
 use DB;
 
@@ -69,13 +70,13 @@ class PostsController extends Controller
             $path = $request ->file('cover_image')->storeAs('public/cover_images',$fileNameToStore);
         }
         else{
-            $fileName = 'noimage.jpg';
+            $fileName='noimage.jpg';
         }
         $post = new Post;
         $post->title=$request->input('title');
         $post->body=$request->input('body');
         $post->user_id=auth()->user()->id;
-        $post->cover_image=$fileNameToStore;
+        $post->cover_image= $fileNameToStore;
         $post->save();
 
         return redirect("/posts") -> with('success','Post Created');
@@ -123,10 +124,26 @@ class PostsController extends Controller
             'title'=>'required',
             'body'=>'required'
         ]);
+             //checking if the file is selected
+             if($request -> hasFile('cover_image')){
+                //getting filename with extension
+                $fileNameWithExt = $request->file('cover_image')->getClientOriginalName();
+                //getting filename only
+                $fileName = pathinfo($fileNameWithExt,PATHINFO_FILENAME);
+                //getting the ext
+                $extension = $request->file('cover_image')->getClientOriginalExtension();
+                //filename to store
+                $fileNameToStore = $fileName.'_'.time().'.'.$extension;
+                //uploading the file
+                $path = $request ->file('cover_image')->storeAs('/public/cover_images',$fileNameToStore);
+            }
 
         $post = Post::find($id);
         $post->title=$request->input('title');
         $post->body=$request->input('body');
+        if($request -> hasFile('cover_image')){
+            $post->cover_image =$fileNameToStore;
+        }
         $post->save();
 
         return redirect("/posts") -> with('success','Post updated');
@@ -145,6 +162,9 @@ class PostsController extends Controller
         //check for correct user for deleting
          if(auth()->user()->id !== $post->user_id){
          return redirect('/posts')-> with('error', 'unauthorised page');
+         }
+         if($post->cover_image !== 'noimage.jpg'){
+             Storage::delete('/public/cover_images/'.$post->cover_image);
          }
         $post->delete();
         return redirect("/posts") -> with('danger','Post deleted');

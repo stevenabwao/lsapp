@@ -3,7 +3,7 @@
 @section( 'content')
 <a href="/lsapp/public/posts" class="btn btn-default">Go Back</a>
 <h1>{{$post->title}}</h1>
-<img style="width: 100%" src="/storage/cover_images/{{$post->cover_image}}">
+<img style="width: 100%" src="/lsapp/public/storage/cover_images/{{$post->cover_image}}">
 <br><br>
 <div class='card-body'>
     {!!$post->body!!}

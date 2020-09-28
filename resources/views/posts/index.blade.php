@@ -7,7 +7,7 @@
             <div class="card card-body bg-light">
                 <div class="row">
                     <div class="col-md-4 col-sm-4">
-                     <img style="width: 100%" src="/storage/cover_images/{{$post->cover_image}}" >
+                     <img style="width: 100%" src="/lsapp/public/storage/cover_images/{{$post->cover_image}}" >
 
                     </div>
                     <div class="col-md-4 col-sm-4">
